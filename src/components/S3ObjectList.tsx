@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { listS3Objects } from './s3Access'; // Assuming you have the s3Access.js file in the same directory
+import { listS3Objects, downloadS3Object } from './s3Access'; // Assuming you have the s3Access.js file in the same directory
 
 class S3ObjectList extends React.Component {
   constructor(props: any) {
@@ -19,13 +19,24 @@ class S3ObjectList extends React.Component {
     }
   };
 
+  handleDownloadS3Object = async (key: string) => {
+    try {
+      const data = await downloadS3Object('staggcp-6', key);
+      console.log('Downloaded S3 object:', data);
+    } catch (error) {
+      console.error('Error downloading S3 object:', error);
+    }
+  }
+
   render() {
     return (
       <div>
         <button onClick={this.handleListObjects}>List S3 Objects</button>
         <ul>
           {(this.state as { objects: any[] }).objects.map((object, index) => (
-            <li key={index}>{object.Key}</li>
+            <li key={index} onClick={() => this.handleDownloadS3Object(object.Key)}>
+              {object.Key}
+            </li>
           ))}
         </ul>
       </div>

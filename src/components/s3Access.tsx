@@ -36,3 +36,19 @@ export const listS3Buckets = async (): Promise<S3Bucket[]> => {
         throw new Error(`Failed to list S3 buckets: ${error}`);
     }
 };
+
+export const downloadS3Object = async (bucketName: string, key: string) => {
+    const params = {
+        Bucket: bucketName,
+        Key: key,
+    };
+
+    try {
+        const data = await s3.getObject(params).promise();
+        const decoder = new TextDecoder('utf-8');
+        const decodedData = decoder.decode(data.Body as Uint8Array);
+        return decodedData;
+    } catch (error) {
+        throw new Error(`Failed to download S3 object: ${error}`);
+    }
+}

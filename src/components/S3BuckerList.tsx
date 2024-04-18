@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { listS3Buckets } from './s3Access'; // Assuming you have the s3Access.ts file in the same directory
 
 interface S3Bucket {
