@@ -52,3 +52,17 @@ export const downloadS3Object = async (bucketName: string, key: string) => {
         throw new Error(`Failed to download S3 object: ${error}`);
     }
 }
+
+export const uploadS3Object = async (bucketName: string, key: string, content: string) => {
+    const params = {
+        Bucket: bucketName,
+        Key: key,
+        Body: content,
+    };
+
+    try {
+        await s3.putObject(params).promise();
+    } catch (error) {
+        throw new Error(`Failed to upload S3 object: ${error}`);
+    }
+}

@@ -1,47 +1,49 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useState } from 'react';
 import { listS3Objects, downloadS3Object } from './s3Access'; // Assuming you have the s3Access.js file in the same directory
+import FileEditor from './FileEditor';
+import { ObjectList } from 'aws-sdk/clients/s3';
 
-class S3ObjectList extends React.Component {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      objects: [],
-    };
-  }
 
-  handleListObjects = async () => {
+const S3ObjectList: React.FC = () => {
+  const [objects, setObjects] = useState<ObjectList>([]);
+  const [fileContent, setFileContent] = useState<string>('');
+
+  const handleListObjects = async () => {
     try {
       const data = await listS3Objects('staggcp-6');
-      this.setState({ objects: data.Contents });
+      if (data && 'Contents' in data && Array.isArray(data.Contents)) {
+        setObjects(data.Contents);
+      } else {
+        console.error('Error: Invalid data format received from listS3Objects');
+      }
     } catch (error) {
       console.error('Error listing S3 objects:', error);
     }
   };
 
-  handleDownloadS3Object = async (key: string) => {
+  const handleDownloadS3Object = async (key: string) => {
     try {
       const data = await downloadS3Object('staggcp-6', key);
       console.log('Downloaded S3 object:', data);
+      setFileContent(data);
     } catch (error) {
       console.error('Error downloading S3 object:', error);
     }
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <button onClick={this.handleListObjects}>List S3 Objects</button>
-        <ul>
-          {(this.state as { objects: any[] }).objects.map((object, index) => (
-            <li key={index} onClick={() => this.handleDownloadS3Object(object.Key)}>
-              {object.Key}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <button onClick={handleListObjects}>List S3 Objects</button>
+      <ul>
+        {objects.map((object, index) => (
+          <li key={index} onClick={() => handleDownloadS3Object(object.Key || '')}>
+            {object.Key}
+          </li>
+        ))}
+      </ul>
+      {fileContent && <FileEditor fileContent={fileContent} onSave={(content) => console.log('loggin on save option', content)} />}
+    </div>
+  );
+};
 
 export default S3ObjectList;
