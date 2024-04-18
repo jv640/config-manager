@@ -1,17 +1,13 @@
-import dotenv from 'dotenv';
-
 interface AWSConfig {
   accessKeyId: string | undefined;
   secretAccessKey: string | undefined;
   region: string | undefined;
 }
 
-dotenv.config();
-
 const config: AWSConfig = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+  accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID as string | undefined,
+  secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string | undefined,
+  region: import.meta.env.VITE_AWS_REGION as string | undefined,
 };
 
 export default config;

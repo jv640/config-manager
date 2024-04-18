@@ -12,7 +12,7 @@ class S3ObjectList extends React.Component {
 
   handleListObjects = async () => {
     try {
-      const data = await listS3Objects('YOUR_BUCKET_NAME');
+      const data = await listS3Objects('staggcp-6');
       this.setState({ objects: data.Contents });
     } catch (error) {
       console.error('Error listing S3 objects:', error);
